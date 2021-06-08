@@ -1,0 +1,6 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/wlp2s0/hydra-identity-manager-client.git
+[submodule "server"]
+	path = server
+	url = https://github.com/wlp2s0/hydra-identity-manager-server.git
