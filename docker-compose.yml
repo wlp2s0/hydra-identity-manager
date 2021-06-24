@@ -43,9 +43,6 @@ services:
       - SERVE_ADMIN_CORS_ENABLED=true
       - SERVE_ADMIN_CORS_DEBUG=true
       - SERVE_ADMIN_CORS_ALLOWED_ORIGINS=http://localhost:4002,http://localhost:5002,http://localhost:8001
-    networks: 
-      - hydra-internal
-      - proxy
 
   cockroachd:
     image: cockroachdb/cockroach
@@ -54,24 +51,23 @@ services:
     command: start-single-node --insecure
     volumes: 
       - cockroach-data:/cockroach/cockroach-data
-    networks: 
-      - hydra-internal
-      
+
   # CLIENT
   hydra-identity-manager-client:
-    image: ghcr.io/wlp2s0/hydra-identity-manager/client
+    image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-client/client:0.1.12-local
     ports:
       - 4002:80
 
   # SERVER
   hydra-identity-manager-server:
-    image: ghcr.io/wlp2s0/hydra-identity-manager/server
+    image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-server/server:0.1.5
     environment:
-      APP_CLIENT_BASE_URL: "http://hydra-identity-manager-client:4002"
+      #APP_CLIENT_BASE_URL: "http://hydra-identity-manager-client:4002"
+      APP_CLIENT_BASE_URL: "http://localhost:4002"
       APP_HYDRA_ADMIN_URL: "http://hydra:4445"
-      APP_MONGODB_URI: "mongodb://root:2B3s2Ih1YYxO@hydra/hydra-identity-manager"
+      APP_MONGODB_URI: "mongodb://root:2B3s2Ih1YYxO@mongo/hydra-identity-manager"
     ports:
-      - 5002:80
+      - 5002:5002
 
   mongo:
     image: mongo
