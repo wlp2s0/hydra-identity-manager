@@ -6,7 +6,16 @@ import cors from "cors"
 import { Issuer, Strategy, TokenSet, UserinfoResponse } from "openid-client"
 
 const main = async () => {
-  const openIdProvider = await Issuer.discover("http://localhost:4444")
+/*   const openIdProvider = await Issuer.discover("http://localhost:4444")
+  const openIdClient = new openIdProvider.Client({
+    client_id: "oauth2-client",
+    client_secret: "supersecret",
+    redirect_uris: ["http://localhost:5003/auth/callback"],
+    post_logout_redirect_uris: ["http://localhost:5003/logout/callback"],
+    token_endpoint_auth_method: "client_secret_basic",
+  }) */
+
+  const openIdProvider = await Issuer.discover("https://beta.hydra.mattiacampagna.com")
   const openIdClient = new openIdProvider.Client({
     client_id: "oauth2-client",
     client_secret: "supersecret",
@@ -14,7 +23,6 @@ const main = async () => {
     post_logout_redirect_uris: ["http://localhost:5003/logout/callback"],
     token_endpoint_auth_method: "client_secret_basic",
   })
-
   const app = service()
 
   app.use(cors() as any)
