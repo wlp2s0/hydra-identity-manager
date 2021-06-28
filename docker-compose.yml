@@ -9,6 +9,8 @@ services:
     command:
       migrate sql -e --yes
     restart: on-failure
+    depends_on:
+      - cockroachd
 
   hydra:
     image: oryd/hydra
@@ -54,7 +56,7 @@ services:
 
   # CLIENT
   hydra-identity-manager-client:
-    image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-client/client:0.1.12-local
+    image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-client/client:0.1.15-local
     ports:
       - 4002:80
 
@@ -66,7 +68,8 @@ services:
       APP_CLIENT_BASE_URL: "http://localhost:4002"
       APP_HYDRA_ADMIN_URL: "http://hydra:4445"
       APP_MONGODB_URI: "mongodb://root:2B3s2Ih1YYxO@mongo/hydra-identity-manager"
-    ports:
+      APP_CORS_ORIGIN: "http://localhost:4002"
+      ports:
       - 5002:5002
 
   mongo:
