@@ -55,22 +55,21 @@ services:
       - cockroach-data:/cockroach/cockroach-data
 
   # CLIENT
-  hydra-identity-manager-client:
-    image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-client/client:0.1.15-local
-    ports:
-      - 4002:80
+  #hydra-identity-manager-client:
+  #  image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-client/client:0.1.15-local
+  #  ports:
+  #    - 4002:80
 
   # SERVER
-  hydra-identity-manager-server:
-    image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-server/server:0.1.5
-    environment:
-      #APP_CLIENT_BASE_URL: "http://hydra-identity-manager-client:4002"
-      APP_CLIENT_BASE_URL: "http://localhost:4002"
-      APP_HYDRA_ADMIN_URL: "http://hydra:4445"
-      APP_MONGODB_URI: "mongodb://root:2B3s2Ih1YYxO@mongo/hydra-identity-manager"
-      APP_CORS_ORIGIN: "http://localhost:4002"
-      ports:
-      - 5002:5002
+  #hydra-identity-manager-server:
+  #  image: docker.pkg.github.com/wlp2s0/hydra-identity-manager-server/server:0.1.5
+  #  environment:
+  #    APP_CLIENT_BASE_URL: "http://localhost:4002"
+  #    APP_HYDRA_ADMIN_URL: "http://hydra:4445"
+  #    APP_MONGODB_URI: "mongodb://root:2B3s2Ih1YYxO@mongo/hydra-identity-manager"
+  #    APP_CORS_ORIGIN: "http://localhost:4002"
+  #  ports:
+  #    - 5002:5002
 
   mongo:
     image: mongo

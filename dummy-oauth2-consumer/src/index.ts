@@ -6,23 +6,23 @@ import cors from "cors"
 import { Issuer, Strategy, TokenSet, UserinfoResponse } from "openid-client"
 
 const main = async () => {
-/*   const openIdProvider = await Issuer.discover("http://localhost:4444")
+  const openIdProvider = await Issuer.discover("http://localhost:4444")
   const openIdClient = new openIdProvider.Client({
     client_id: "oauth2-client",
     client_secret: "supersecret",
+    redirect_uris: ["http://localhost:5003/auth/callback"],
+    //post_logout_redirect_uris: ["http://localhost:5003/logout/callback"],
+    token_endpoint_auth_method: "client_secret_basic",
+  }) 
+
+/*   const openIdProvider = await Issuer.discover("https://beta.hydra.mattiacampagna.com")
+  const openIdClient = new openIdProvider.Client({
+    client_id: "oauth2-client",
+    client_secret: "fsdhiufssihufwHgshgh",
     redirect_uris: ["http://localhost:5003/auth/callback"],
     post_logout_redirect_uris: ["http://localhost:5003/logout/callback"],
     token_endpoint_auth_method: "client_secret_basic",
   }) */
-
-  const openIdProvider = await Issuer.discover("https://beta.hydra.mattiacampagna.com")
-  const openIdClient = new openIdProvider.Client({
-    client_id: "oauth2-client",
-    client_secret: "supersecret",
-    redirect_uris: ["http://localhost:5003/auth/callback"],
-    post_logout_redirect_uris: ["http://localhost:5003/logout/callback"],
-    token_endpoint_auth_method: "client_secret_basic",
-  })
   const app = service()
 
   app.use(cors() as any)
@@ -82,10 +82,17 @@ const main = async () => {
   })
 
   app.get("/auth/am-i-auth", (req, res) => {
-    //console.log(req.isAuthenticated())
-    //console.log(req.user)
     const { user } = req
     res.send({ user })
+  })
+
+  // Logout callback
+  app.get("/auth/logout/callback", async (req, res, next) => {
+    req.logout();
+  })
+
+  app.get("/logout", async (req, res, next) => {
+    res.redirect('http://localhost:4444/oauth2/sessions/logout')
   })
 
   app.listen(5003)
