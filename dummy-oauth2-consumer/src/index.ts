@@ -7,6 +7,7 @@ import { Issuer, Strategy, TokenSet, UserinfoResponse } from "openid-client"
 
 const main = async () => {
   const openIdProvider = await Issuer.discover("http://localhost:4444")
+  
   const openIdClient = new openIdProvider.Client({
     client_id: "dummy-oauth2-consumer",
     client_secret: "supersecret",
@@ -44,7 +45,7 @@ const main = async () => {
   passport.use(
     "oidc",
     new Strategy(
-      { client: openIdClient },
+      { client: openIdClient, params: { scope: "openid offline" } },
       (tokenSet: TokenSet, userinfo: UserinfoResponse, done: (err: string | null, user?: any) => void) => {
         console.log("token info")
         console.log(tokenSet)
