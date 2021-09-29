@@ -8,10 +8,10 @@ import { Issuer, Strategy, TokenSet, UserinfoResponse } from "openid-client"
 const main = async () => {
   const openIdProvider = await Issuer.discover("http://localhost:4444")
   const openIdClient = new openIdProvider.Client({
-    client_id: "oauth2-client",
+    client_id: "dummy-oauth2-consumer",
     client_secret: "supersecret",
-    redirect_uris: ["http://localhost:5003/auth/callback"],
-    //post_logout_redirect_uris: ["http://localhost:5003/logout/callback"],
+    redirect_uris: ["http://localhost:8001/auth/login/callback"],
+    post_logout_redirect_uris: ["http://localhost:8001/auth/logout/callback"],
     token_endpoint_auth_method: "client_secret_basic",
   }) 
 
@@ -52,7 +52,7 @@ const main = async () => {
         console.log(userinfo)
         // remove sid from user info, we have no need of that here
         const { sid, ...user } = userinfo
-        return done(null, user)
+        return done(null, { user, idToken: tokenSet.id_token })
       },
     ),
   )
@@ -77,7 +77,7 @@ const main = async () => {
   })
 
   // Get callback
-  app.get("/auth/callback", (req, res, next) => {
+  app.get("/auth/login/callback", (req, res, next) => {
     passport.authenticate("oidc", { successRedirect: "/auth/am-i-auth" })(req, res, next)
   })
 
@@ -89,14 +89,26 @@ const main = async () => {
   // Logout callback
   app.get("/auth/logout/callback", async (req, res, next) => {
     req.logout();
+    res.send("ok")
   })
 
   app.get("/logout", async (req, res, next) => {
-    res.redirect('http://localhost:4444/oauth2/sessions/logout')
+    // oryPublicApiClient.disconnectUser()
+    const { user } = req
+    if (!user) { 
+      return res.send("ciao")
+    }
+    const idToken = (user as unknown as any).idToken
+
+    const logoutUrl = new URL('http://localhost:4444/oauth2/sessions/logout');
+    logoutUrl.searchParams.append("post_logout_redirect_uri", "http://localhost:8001/auth/logout/callback")
+    logoutUrl.searchParams.append("id_token_hint", idToken)
+    
+    res.redirect(logoutUrl.toString())
   })
 
-  app.listen(5003)
-  console.log("Server listening at: http://localhost:5003")
+  app.listen(8001)
+  console.log("Server listening at: http://localhost:8001")
 }
 
 main()
