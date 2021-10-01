@@ -26,7 +26,10 @@ const main = async () => {
   }) */
   const app = service()
 
-  app.use(cors() as any)
+  app.use(cors({
+    origin: "http://localhost:8002",
+    credentials: true,
+  }))
   app.use(service.json())
 
   // Sessions
@@ -83,8 +86,10 @@ const main = async () => {
   })
 
   app.get("/auth/am-i-auth", (req, res) => {
-    const { user } = req
-    res.send({ user })
+    if (req.isAuthenticated() && req.user) {
+      return res.send(req.user)
+    }
+    return res.status(401).send("Not authenticated") 
   })
 
   // Logout callback
